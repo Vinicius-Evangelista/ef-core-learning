@@ -1,0 +1,16 @@
+C:\Users\vinie\ef-core-learning\Data\obj\Debug\net8.0\Data.csproj.AssemblyReference.cache
+C:\Users\vinie\ef-core-learning\Data\obj\Debug\net8.0\Data.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\vinie\ef-core-learning\Data\obj\Debug\net8.0\Data.AssemblyInfoInputs.cache
+C:\Users\vinie\ef-core-learning\Data\obj\Debug\net8.0\Data.AssemblyInfo.cs
+C:\Users\vinie\ef-core-learning\Data\obj\Debug\net8.0\Data.csproj.CoreCompileInputs.cache
+C:\Users\vinie\ef-core-learning\Data\obj\Debug\net8.0\Data.sourcelink.json
+C:\Users\vinie\ef-core-learning\Data\bin\Debug\net8.0\Data.deps.json
+C:\Users\vinie\ef-core-learning\Data\bin\Debug\net8.0\Data.dll
+C:\Users\vinie\ef-core-learning\Data\bin\Debug\net8.0\Data.pdb
+C:\Users\vinie\ef-core-learning\Data\bin\Debug\net8.0\Domain.dll
+C:\Users\vinie\ef-core-learning\Data\bin\Debug\net8.0\Domain.pdb
+C:\Users\vinie\ef-core-learning\Data\obj\Debug\net8.0\Data.csproj.CopyComplete
+C:\Users\vinie\ef-core-learning\Data\obj\Debug\net8.0\Data.dll
+C:\Users\vinie\ef-core-learning\Data\obj\Debug\net8.0\refint\Data.dll
+C:\Users\vinie\ef-core-learning\Data\obj\Debug\net8.0\Data.pdb
+C:\Users\vinie\ef-core-learning\Data\obj\Debug\net8.0\ref\Data.dll
