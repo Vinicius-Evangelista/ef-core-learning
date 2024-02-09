@@ -9,6 +9,10 @@ internal class CoachConfiguration : IEntityTypeConfiguration<Coach>
     public void Configure(EntityTypeBuilder<Coach> builder)
     {
         builder.HasOne(c => c.Team).WithOne(t => t.Coach).HasForeignKey<Team>(t => t.CoachId);
+        
+        // Configuring some globals queries, any time we query this  table, it gonna run together
+        builder.HasQueryFilter(t => t.Name.Contains("a"));
+
         builder.HasKey(p => p.Id);
         builder.HasData(
 

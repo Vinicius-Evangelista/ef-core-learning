@@ -17,7 +17,8 @@ public class LeagueDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer(" Server=localhost;Database=ef-learing;User Id=sa;Password=sesiInd@134;TrustServerCertificate=True").LogTo(Console.WriteLine, LogLevel.Information).EnableSensitiveDataLogging().EnableDetailedErrors();
+      // Using  command timout
+        optionsBuilder.UseSqlServer(" Server=localhost;Database=ef-learing;User Id=sa;Password=sesiInd@134;TrustServerCertificate=True", sqloptions => sqloptions.CommandTimeout(5)).LogTo(Console.WriteLine, LogLevel.Information).EnableSensitiveDataLogging().EnableDetailedErrors();
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -35,8 +36,35 @@ public class LeagueDbContext : DbContext
         modelBuilder.Entity<TeamsAndLeaguesView>().ToTable("tb_with_trick_name");
 
         //Used in the case we have a User Funtion on Db
-        modelBuilder.HasDbFunction(typeof(LeagueDbContext).GetMethod(nameof(GetEarliestTeamMatch), new [] {typeof(int)})).HasName("GetEarliesMatch");
+        //        momelBuilder.HasDbFunction(typeof(LeagueDbContext).GetMethod(nameof(GetEarliestTeamMatch), new { typeof(int) })).HasName("GetEarliesMatch");atch");atch");
+    }
+
+    // used for global annotation configuring
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        configurationBuilder.Properties<string>().HaveMaxLength(500);
+
+
+        base.ConfigureConventions(configurationBuilder);
+    }
+
+    // In case we wan't to modifiy the SaveChanges to do some operation.
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
+    {
+        var entries = ChangeTracker.Entries<BaseDomainModel>().Where(q => q.State == EntityState.Modified || q.State == EntityState.Added);
+
+        foreach(var entry in entries)
+        {
+
+            entry.Entity.ModifiedData = DateTime.UtcNow;
+
+            if(entry.State == EntityState.Added)
+              entry.Entity.CreatDate = DateTime.UtcNow;
+        }
+
+        return base.SaveChangesAsync();
     }
 
     public DateTime GetEarliestTeamMatch(int teamId) => throw new NotImplementedException();
+
 }

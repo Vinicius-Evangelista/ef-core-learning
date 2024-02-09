@@ -6,12 +6,85 @@ using var context = new LeagueDbContext();
 
 
 
+
+async Task QueryFilter()
+{
+    // a way to ignore query filter.
+    var coach = context.Coachs.IgnoreQueryFilters();
+}
+
+async Task UsingTransaction()
+{
+    // This is useful for complex adding, or adding in multiple parts.
+
+    var transaction = context.Database.BeginTransaction();
+    var league = new League
+    {
+        Name = "Brasileirão"
+    };
+
+    context.Add(league);
+    await context.SaveChangesAsync();
+
+    await transaction.CreateSavepointAsync("Leaguecreated");
+
+    var coach = new Coach
+    {
+        Name = "Tite"
+    };
+
+    context.Add(coach);
+    await context.SaveChangesAsync();
+
+    var team = new Team
+    {
+        LeagueId = league.Id,
+        Name = "Corinthians",
+        CoachId = coach.Id
+    };
+
+    context.Add(team);
+    context.SaveChangesAsync();
+
+    try
+    {
+        await transaction.CommitAsync();
+
+    }
+    catch (DbUpdateConcurrencyException)
+    {
+        await transaction.RollbackAsync();
+        await transaction.RollbackToSavepointAsync("Leaguecreated");
+
+    }
+
+
+}
+
+// await ModifingAndGettingHistoric();
+
+async Task ModifingAndGettingHistoric()
+{
+    // using temporal/historic tables from SQL SERVER
+    var team = context.Teams.FirstOrDefault();
+
+    for (int i = 0; i <= 4; i++)
+    {
+        team.Name = $"TeamName{i}";
+        await context.SaveChangesAsync();
+    }
+
+    var teamChangeNameHistoric = context.Teams.TemporalAll().Where(t => t.Id == team.Id)
+                                                            .ToList();
+    foreach (var record in teamChangeNameHistoric)
+    {
+        Console.WriteLine(record.Name);
+    }
+}
+
 async Task QueryingScalarType()
 {
     var leaguesId = context.Database.SqlQuery<int>($"SELECT Id FROM Leagues").ToList();
-
-
-
 }
 
 async Task CallingUserFunctions()

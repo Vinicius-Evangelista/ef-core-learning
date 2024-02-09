@@ -9,17 +9,33 @@ internal class TeamConfiguration : IEntityTypeConfiguration<Team>
     public void Configure(EntityTypeBuilder<Team> builder)
     {
         builder.HasKey(t => t.Id);
+
+        // Composite Key Configuration
+        builder.HasIndex(t => new {t.Id, t.LeagueId}).IsUnique();
+
+        // Data Notations on Database side.
+        builder.Property(t => t.Name).HasMaxLength(500);
+
+
         builder.Property(b => b.Id).ValueGeneratedOnAdd();
 
-        builder.HasOne(t => t.League).WithMany(l => l.Teams).HasForeignKey(t => t.LeagueId);
+        // Temporal table from SQL Server
+        builder.ToTable("Teams", b => b.IsTemporal());
 
-        builder.HasOne(t => t.Coach).WithOne(c => c.Team).HasForeignKey<Team>(t => t.CoachId);
+        builder.HasOne(t => t.League)
+               .WithMany(l => l.Teams)
+               .HasForeignKey(t => t.LeagueId)
+               .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(t => t.Coach)
+               .WithOne(c => c.Team)
+               .HasForeignKey<Team>(t => t.CoachId)
+               .OnDelete(DeleteBehavior.Restrict);
         
         builder.HasData(
             new Team
             {
                 Id = 1,
-                CreatDate = DateTime.Now,
                 Name = "Real Madrid",
                 LeagueId = 500,
                 CoachId = 99
@@ -28,7 +44,6 @@ internal class TeamConfiguration : IEntityTypeConfiguration<Team>
             new Team
             {
                 Id = 2,
-                CreatDate = DateTime.Now,
                 Name = "Chelsea",
                 LeagueId = 500,
                 CoachId = 2 * 99
@@ -37,7 +52,6 @@ internal class TeamConfiguration : IEntityTypeConfiguration<Team>
             new Team
             {
                 Id = 3,
-                CreatDate = DateTime.Now,
                 Name = "Barcelona",
                 LeagueId = 500,
                 CoachId = 99 * 4

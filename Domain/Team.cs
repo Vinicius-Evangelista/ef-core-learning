@@ -1,6 +1,6 @@
 namespace Domain;
 
-public class Team : BaseDomainModel
+public class Team 
 {
     public int Id { get; set; }
 

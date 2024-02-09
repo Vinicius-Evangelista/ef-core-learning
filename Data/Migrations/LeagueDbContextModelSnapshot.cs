@@ -22,6 +22,19 @@ namespace Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Data.View.TeamsAndLeaguesView", b =>
+                {
+                    b.Property<string>("LeagueName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("tb_with_trick_name", (string)null);
+
+                    b.ToView("vw_TeamAndLeaguesView", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Coach", b =>
                 {
                     b.Property<int>("Id")
@@ -31,6 +44,9 @@ namespace Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ModifiedData")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
@@ -44,37 +60,43 @@ namespace Data.Migrations
                         new
                         {
                             Id = 99,
-                            CreatDate = new DateTime(2024, 2, 8, 9, 59, 35, 965, DateTimeKind.Local).AddTicks(6669),
+                            CreatDate = new DateTime(2024, 2, 9, 14, 7, 43, 476, DateTimeKind.Local).AddTicks(1484),
+                            ModifiedData = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Treinador1"
                         },
                         new
                         {
                             Id = 198,
-                            CreatDate = new DateTime(2024, 2, 8, 9, 59, 35, 965, DateTimeKind.Local).AddTicks(6680),
+                            CreatDate = new DateTime(2024, 2, 9, 14, 7, 43, 476, DateTimeKind.Local).AddTicks(1495),
+                            ModifiedData = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Treinador2"
                         },
                         new
                         {
                             Id = 297,
-                            CreatDate = new DateTime(2024, 2, 8, 9, 59, 35, 965, DateTimeKind.Local).AddTicks(6681),
+                            CreatDate = new DateTime(2024, 2, 9, 14, 7, 43, 476, DateTimeKind.Local).AddTicks(1522),
+                            ModifiedData = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Treinador3"
                         },
                         new
                         {
                             Id = 396,
-                            CreatDate = new DateTime(2024, 2, 8, 9, 59, 35, 965, DateTimeKind.Local).AddTicks(6682),
+                            CreatDate = new DateTime(2024, 2, 9, 14, 7, 43, 476, DateTimeKind.Local).AddTicks(1523),
+                            ModifiedData = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Treinador4"
                         },
                         new
                         {
                             Id = 495,
-                            CreatDate = new DateTime(2024, 2, 8, 9, 59, 35, 965, DateTimeKind.Local).AddTicks(6683),
+                            CreatDate = new DateTime(2024, 2, 9, 14, 7, 43, 476, DateTimeKind.Local).AddTicks(1524),
+                            ModifiedData = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Treinador5"
                         },
                         new
                         {
                             Id = 594,
-                            CreatDate = new DateTime(2024, 2, 8, 9, 59, 35, 965, DateTimeKind.Local).AddTicks(6684),
+                            CreatDate = new DateTime(2024, 2, 9, 14, 7, 43, 476, DateTimeKind.Local).AddTicks(1525),
+                            ModifiedData = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Treinador6"
                         });
                 });
@@ -90,6 +112,9 @@ namespace Data.Migrations
                     b.Property<DateTime>("CreatDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("ModifiedData")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -101,7 +126,8 @@ namespace Data.Migrations
                         new
                         {
                             Id = 500,
-                            CreatDate = new DateTime(2024, 2, 8, 9, 59, 35, 965, DateTimeKind.Local).AddTicks(8324),
+                            CreatDate = new DateTime(2024, 2, 9, 14, 7, 43, 476, DateTimeKind.Local).AddTicks(3267),
+                            ModifiedData = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "La Liga"
                         });
                 });
@@ -117,14 +143,21 @@ namespace Data.Migrations
                     b.Property<int>("CoachId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<int?>("LeagueId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("PeriodEnd")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime2")
+                        .HasColumnName("PeriodEnd");
+
+                    b.Property<DateTime>("PeriodStart")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime2")
+                        .HasColumnName("PeriodStart");
 
                     b.HasKey("Id");
 
@@ -133,14 +166,24 @@ namespace Data.Migrations
 
                     b.HasIndex("LeagueId");
 
-                    b.ToTable("Teams");
+                    b.ToTable("Teams", (string)null);
+
+                    b.ToTable(tb => tb.IsTemporal(ttb =>
+                            {
+                                ttb.UseHistoryTable("TeamsHistory");
+                                ttb
+                                    .HasPeriodStart("PeriodStart")
+                                    .HasColumnName("PeriodStart");
+                                ttb
+                                    .HasPeriodEnd("PeriodEnd")
+                                    .HasColumnName("PeriodEnd");
+                            }));
 
                     b.HasData(
                         new
                         {
                             Id = 1,
                             CoachId = 99,
-                            CreatDate = new DateTime(2024, 2, 8, 9, 59, 35, 965, DateTimeKind.Local).AddTicks(9629),
                             LeagueId = 500,
                             Name = "Real Madrid"
                         },
@@ -148,7 +191,6 @@ namespace Data.Migrations
                         {
                             Id = 2,
                             CoachId = 198,
-                            CreatDate = new DateTime(2024, 2, 8, 9, 59, 35, 965, DateTimeKind.Local).AddTicks(9633),
                             LeagueId = 500,
                             Name = "Chelsea"
                         },
@@ -156,7 +198,6 @@ namespace Data.Migrations
                         {
                             Id = 3,
                             CoachId = 396,
-                            CreatDate = new DateTime(2024, 2, 8, 9, 59, 35, 965, DateTimeKind.Local).AddTicks(9634),
                             LeagueId = 500,
                             Name = "Barcelona"
                         });
@@ -167,12 +208,13 @@ namespace Data.Migrations
                     b.HasOne("Domain.Coach", "Coach")
                         .WithOne("Team")
                         .HasForeignKey("Domain.Team", "CoachId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Domain.League", "League")
                         .WithMany("Teams")
-                        .HasForeignKey("LeagueId");
+                        .HasForeignKey("LeagueId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Coach");
 

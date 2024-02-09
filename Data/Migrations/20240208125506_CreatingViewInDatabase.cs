@@ -15,7 +15,7 @@ namespace Data.Migrations
                  AS
                  SELECT t.Name, l.Name AS LeagueName
                  FROM Teams AS t
-                 LEFT JOIN Leagues AS l ON t.LeagueId = l.Id"
+                 LEFT JOIN League AS l ON t.LeagueId = l.Id"
             );
         }
 
